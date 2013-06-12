@@ -66,14 +66,63 @@ var setupPhotos = (function ($) {
         return function (img) {
             var elm = document.createElement('div');
             elm.className = 'photo';
+
+            var heartLink = document.createElement('a');
+            heartLink.className = 'favorite';
+            heartLink.href = '#';
+            $(heartLink).click(toggleFavorite(img));
+
+            var heart = document.createElement('i');
+            heart.className = isFavorite(img) ? 'icon-heart' : 'icon-heart-empty';
+
+            heartLink.appendChild(heart);
             elm.appendChild(img);
+            elm.appendChild(heartLink);
             holder.appendChild(elm);
         };
     }
 
+    function isFavorite(img) {
+        return (favorites.indexOf(img.src) != -1);
+    }
+
+    function toggleFavorite(img) {
+        var url = img.src;
+        var index = favorites.indexOf(url);
+
+        return function() {
+            if(index != -1) {
+                // remove cookie
+                favorites.splice(index, 1);
+                $(this).children()[0].className = 'icon-heart-empty';
+            } else {
+                // add cookie
+                favorites.push(url);
+                $(this).children()[0].className = 'icon-heart';
+            }
+
+            document.cookie = 'favorites=' + favorites.toString();
+        }
+    }
+
+    function fetchFavorites() {
+        var result = [];
+
+        var cookie = document.cookie;
+        var favorites = document.cookie.match(/favorites=[^; ]*/g);
+
+        if(favorites && favorites.length) {
+            result = favorites[0].replace(/favorites=/, '').split(",");
+        }
+
+        return result;
+    }
+
     // ----
-    
+
     var max_per_tag = 5;
+    var favorites = fetchFavorites();
+
     return function setup (tags, callback) {
         loadAllPhotos(tags, max_per_tag, function (err, items) {
             if (err) { return callback(err); }

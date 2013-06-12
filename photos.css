@@ -13,10 +13,29 @@ body {
     margin: 0 2px 2px 0;
     overflow: hidden;
     height: 160px;
+    position: relative;
 }
 
 .photo,
 .photo img {
     min-width: 160px;
     max-width: 240px;
+}
+
+.photo img {
+	display: block;
+}
+
+.photo a.favorite {
+	color: #000;
+	text-decoration: none;
+	display: block;
+	position: absolute;
+	top: 12px;
+	left: 12px;
+	background: #eee;
+	padding: 4px;
+
+	border-radius: 6px;
+	box-shadow: 0px 0px 4px #000;
 }
