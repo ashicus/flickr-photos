@@ -39,3 +39,15 @@ body {
 	border-radius: 6px;
 	box-shadow: 0px 0px 4px #000;
 }
+
+#loading {
+	display: none;
+	clear: both;
+}
+
+#loading h2 {
+	font: 32px Arial;
+	font-weight: bold;
+	padding: 30px 0;
+	text-align: center;
+}

@@ -87,7 +87,9 @@ var setupPhotos = (function ($) {
     }
 
     function toggleFavorite(img) {
-        return function() {
+        return function(e) {
+            e.preventDefault();
+
             var url = img.src;
             var index = favorites.indexOf(url);
 
@@ -118,17 +120,46 @@ var setupPhotos = (function ($) {
         return result;
     }
 
+    function isWindowFilled() {
+        return ($(window).height() < $(document).height());
+    }
+
+    function isScrolledToBottom() {
+        return ($(window).height() + $(window).scrollTop() == $(document).height());
+    }
+
     // ----
 
     var max_per_tag = 5;
     var favorites = fetchFavorites();
 
     return function setup (tags, callback) {
-        loadAllPhotos(tags, max_per_tag, function (err, items) {
-            if (err) { return callback(err); }
+        function refreshPhotos(max) {
+            if(max == null) { max = max_per_tag; }
 
-            each(items.map(renderPhoto), imageAppender('photos'));
-            callback();
+            loadAllPhotos(tags, max, function (err, items) {
+                currentlyLoadingMore = false;
+                $("#loading").fadeOut();
+                if (err) { return callback(err); }
+
+                each(items.map(renderPhoto), imageAppender('photos'));
+                callback();
+
+                if(!isWindowFilled()) {
+                    refreshPhotos();
+                }
+            });
+        }
+
+        $(window).scroll(function() {
+            if(isScrolledToBottom() && !currentlyLoadingMore) {
+                $("#loading").fadeIn();
+
+                currentlyLoadingMore = true;
+                refreshPhotos(10);
+            }
         });
+
+        refreshPhotos();
     };
 }(jQuery));
