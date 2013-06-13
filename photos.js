@@ -87,10 +87,10 @@ var setupPhotos = (function ($) {
     }
 
     function toggleFavorite(img) {
-        var url = img.src;
-        var index = favorites.indexOf(url);
-
         return function() {
+            var url = img.src;
+            var index = favorites.indexOf(url);
+
             if(index != -1) {
                 // remove cookie
                 favorites.splice(index, 1);
